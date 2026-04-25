@@ -18,7 +18,7 @@ def get_file_content(working_dir, file_path):
     if not os.path.isfile(full_path):
         print(f"Error: File not found or is not a regular file: \"{file_path}\"")
         return
-    #
+    
     with open(file_path, "r") as f:
         file_content_string = f.read(MAX_CHARS)
         if f.read(MAX_CHARS + 1) is not None:
