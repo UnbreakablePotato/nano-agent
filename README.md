@@ -5,9 +5,11 @@ Nano-Agent is a streamlined AI agent which allows LLM's to work on local tasks. 
 
 ## Key Features
 **Stateful Reasoning** 
+
 Utilizes Gemini's long-context window to maintain multi turn logic and goal tracking.
 
 **Modular Tool Use**
+
  User interface for adding custom skills.
 
 ## Tech Stack
