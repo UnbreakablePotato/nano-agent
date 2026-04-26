@@ -1,4 +1,6 @@
 import os
+from google.genai import types
+
 def write_file(working_dir, file_path, content):
     abs = os.path.abspath(working_dir)
 
@@ -24,3 +26,25 @@ def write_file(working_dir, file_path, content):
         f.write(content)
     print(f"Successfully wrote to \"{file_path}\" ({len(content)} characters written)")
     return 
+
+schema_write_file = types.FunctionDeclaration(
+    name="write_file",
+    description="Write or overwrite files",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "working_dir": types.Schema(
+                type=types.Type.STRING,
+                description="Directory path to list files from, relative to the working directory (default is the working directory itself)",
+            ),
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="file path corresponding to the file we wish to run",
+            ),
+            "content": types.Schema(
+                type=types.Type.STRING,
+                description="The file content to be read"
+            ),
+        },
+    ),
+)
