@@ -3,6 +3,8 @@ import os
 from google import genai
 from google.genai import types
 import argparse
+from system_prompts import system_prompt
+from call_function import available_functions
 
 load_dotenv()
 
@@ -20,7 +22,10 @@ args = parser.parse_args()
 
 messages = [types.Content(role="user", parts=[types.Part(text=args.user_prompt)])]
 
-res = client.models.generate_content(model="gemini-2.5-flash", contents=messages)
+res = client.models.generate_content(
+    model="gemini-2.5-flash",
+    contents=messages,
+    config=types.GenerateContentConfig(tools=[available_functions],system_instruction=system_prompt))
 
 usage = res.usage_metadata
 
@@ -33,4 +38,8 @@ if usage is not None and args.verbose:
 if usage is None:
     raise RuntimeError("Prompt seems to have failed")
 
-print(res.text)
+if res.function_calls is None:
+    print(res.text)
+
+for func in res.function_calls:
+    print(f"Calling function: {func.name}({func.args})")
