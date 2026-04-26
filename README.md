@@ -3,7 +3,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Nano-Agent is a streamlined AI agent which allows LLM's to work on local tasks. BY leveraging the Gemini 2.5 Flash API, the agent can parse complex user inpu and maintain conversation state.
+Nano-Agent is a streamlined AI agent which allows LLM's to work on local tasks. By leveraging the Gemini 2.5 Flash API, the agent can parse complex user input and maintain conversation state.
 
 ## Key Features
 **Stateful Reasoning** 
