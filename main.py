@@ -4,7 +4,7 @@ from google import genai
 from google.genai import types
 import argparse
 from system_prompts import system_prompt
-from call_function import available_functions
+from call_function import available_functions, call_function
 
 load_dotenv()
 
@@ -41,5 +41,16 @@ if usage is None:
 if res.function_calls is None:
     print(res.text)
 
+function_respones = []
 for func in res.function_calls:
-    print(f"Calling function: {func.name}({func.args})")
+    res = call_function(func, args.verbose)
+    if(
+        not res.parts
+        or not res.parts[0].function_response
+        or not res.parts[0].function_response.response
+    ):
+        raise RuntimeError(f"Empty function response for {func.name}")
+    if args.verbose:
+        print(f"-> {res.parts[0].function_response.response}")
+
+    function_respones.append(res.parts[0])
