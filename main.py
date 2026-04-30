@@ -5,52 +5,63 @@ from google.genai import types
 import argparse
 from system_prompts import system_prompt
 from call_function import available_functions, call_function
+from openai import OpenAI
+import sys
+def main():
+    load_dotenv()
 
-load_dotenv()
+    api_key = os.environ.get("GEMINI_API_KEY")
 
-api_key = os.environ.get("GEMINI_API_KEY")
+    if api_key == None:
+        raise Exception("api key is empty")
 
-if api_key == None:
-    raise Exception("api key is empty")
+    client = genai.Client(api_key=api_key)
 
-client = genai.Client(api_key=api_key)
+    parser = argparse.ArgumentParser(description="Chatbot")
+    parser.add_argument("user_prompt", type=str, help="User prompt")
+    parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
+    args = parser.parse_args()
 
-parser = argparse.ArgumentParser(description="Chatbot")
-parser.add_argument("user_prompt", type=str, help="User prompt")
-parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
-args = parser.parse_args()
+    messages = [types.Content(role="user", parts=[types.Part(text=args.user_prompt)])]
+    for i in range(20):
+        res = client.models.generate_content(
+            model="gemini-2.5-pro",
+            contents=messages,
+            config=types.GenerateContentConfig(tools=[available_functions],system_instruction=system_prompt))
 
-messages = [types.Content(role="user", parts=[types.Part(text=args.user_prompt)])]
+        if res.candidates is not None:
+            for candidate in res.candidates:
+                messages.append(candidate.content)
 
-res = client.models.generate_content(
-    model="gemini-2.5-flash",
-    contents=messages,
-    config=types.GenerateContentConfig(tools=[available_functions],system_instruction=system_prompt))
+        usage = res.usage_metadata
 
-usage = res.usage_metadata
-
-if usage is not None and args.verbose:
-    print(f"User prompt: {messages}")
-    print(f"Prompt tokens: {usage.prompt_token_count}")
-    print(f"Response tokens: {usage.candidates_token_count}")
+        if usage is not None and args.verbose:
+            print(f"Prompt tokens: {usage.prompt_token_count}")
+            print(f"Response tokens: {usage.candidates_token_count}")
 
 
-if usage is None:
-    raise RuntimeError("Prompt seems to have failed")
+        if usage is None:
+            raise RuntimeError("Prompt seems to have failed")
 
-if res.function_calls is None:
-    print(res.text)
+        if res.function_calls is None:
+            print(res.text)
+            return
 
-function_respones = []
-for func in res.function_calls:
-    res = call_function(func, args.verbose)
-    if(
-        not res.parts
-        or not res.parts[0].function_response
-        or not res.parts[0].function_response.response
-    ):
-        raise RuntimeError(f"Empty function response for {func.name}")
-    if args.verbose:
-        print(f"-> {res.parts[0].function_response.response}")
+        function_respones = []
+        for func in res.function_calls:
+            tool_res = call_function(func, args.verbose)
+            if(
+                not tool_res.parts
+                or not tool_res.parts[0].function_response
+                or not tool_res.parts[0].function_response.response
+            ):
+                raise RuntimeError(f"Empty function response for {func.name}")
+            if args.verbose:
+                print(f"-> {tool_res.parts[0].function_response.response}")
 
-    function_respones.append(res.parts[0])
+            function_respones.append(tool_res.parts[0])
+        messages.append(types.Content(role="user", parts=function_respones))
+    print("Model did not finish a response")
+    return sys.exit(1)
+
+main()
