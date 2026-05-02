@@ -1,6 +1,6 @@
 import os
 from google.genai import types
-from config import MAX_CHARS
+from nano.config import MAX_CHARS
 def get_file_content(working_dir, file_path):
 
     try:

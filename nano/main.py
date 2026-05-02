@@ -3,8 +3,8 @@ import os
 from google import genai
 from google.genai import types
 import argparse
-from system_prompts import system_prompt
-from call_function import available_functions, call_function
+from nano.system_prompts import system_prompt
+from nano.call_function import available_functions, call_function
 from openai import OpenAI
 import sys
 def main():
@@ -25,7 +25,7 @@ def main():
     messages = [types.Content(role="user", parts=[types.Part(text=args.user_prompt)])]
     for i in range(20):
         res = client.models.generate_content(
-            model="gemini-2.5-pro",
+            model="gemini-2.5-flash",
             contents=messages,
             config=types.GenerateContentConfig(tools=[available_functions],system_instruction=system_prompt))
 

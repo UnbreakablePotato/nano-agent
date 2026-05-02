@@ -1,8 +1,6 @@
-# calculator/main.py
-
+from nano.calculator.pkg.calculator import Calculator
+from nano.calculator.pkg.render import format_json_output
 import sys
-from pkg.calculator import Calculator
-from pkg.render import format_json_output
 
 
 def main():
@@ -27,3 +25,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

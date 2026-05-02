@@ -1,13 +1,15 @@
 from google.genai import types
-from functions.get_files_info import schema_get_files_info
-from functions.get_file_content import schema_get_file_content
-from functions.run_python_file import schema_run_python_file
-from functions.write_file import schema_write_file
-from functions.get_file_content import get_file_content
-from functions.get_files_info import get_files_info
-from functions.write_file import write_file
-from functions.run_python_file import run_python_file
-from functions.create_directory import create_dir, schema_create_dir
+from nano.functions.get_files_info import schema_get_files_info
+from nano.functions.get_file_content import schema_get_file_content
+from nano.functions.run_python_file import schema_run_python_file
+from nano.functions.write_file import schema_write_file
+from nano.functions.get_file_content import get_file_content
+from nano.functions.get_files_info import get_files_info
+from nano.functions.write_file import write_file
+from nano.functions.run_python_file import run_python_file
+from nano.functions.create_directory import create_dir, schema_create_dir
+from nano.functions.get_cwd import get_cwd, schema_get_cwd
+import os
 
 available_functions = types.Tool(
     function_declarations=[
@@ -15,7 +17,8 @@ available_functions = types.Tool(
         schema_get_file_content,
         schema_run_python_file,
         schema_write_file,
-        schema_create_dir
+        schema_create_dir,
+        schema_get_cwd
     ]
 )
 
@@ -24,7 +27,8 @@ function_map = {
     "get_files_info": get_files_info,
     "write_file": write_file,
     "run_python_file": run_python_file,
-    "create_dir": create_dir
+    "create_dir": create_dir,
+    "get_cwd": get_cwd
     }
 
 def call_function(function_call, verbose=False):
@@ -48,7 +52,7 @@ def call_function(function_call, verbose=False):
     args = dict(function_call.args) if function_call.args else {}
 
     #To change the default working directory, change the string below
-    args["working_dir"] = "./calculator"
+    args["working_dir"] = os.getcwd()
 
     func_res = function_map[func_name](**args)
 

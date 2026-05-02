@@ -1,4 +1,4 @@
-from functions.run_python_file import run_python_file
+from nano.functions.run_python_file import run_python_file
 
 run_python_file("calculator", "main.py")
 

@@ -1,4 +1,4 @@
-from functions.write_file import write_file
+from nano.functions.write_file import write_file
 
 write_file("calculator", "lorem.txt", "wait, this isn't lorem ipsum")
 

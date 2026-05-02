@@ -1,6 +1,7 @@
 import os
 import subprocess
 from google.genai import types
+import json
 
 def run_python_file(working_dir, file_path:str, args=None):
     try:
@@ -45,6 +46,7 @@ def run_python_file(working_dir, file_path:str, args=None):
         if completed_process.stderr:
             output.append(f"STDERR: {completed_process.stderr}")
         return "\n".join(output)
+    
     except Exception as e:
         return f"Error while executing python file: {e}"
 
@@ -70,3 +72,31 @@ schema_run_python_file = types.FunctionDeclaration(
         required=["file_path"],
     ),
 )
+
+openAI_run_python_file = [
+  {
+    "type": "function",
+    "function": {
+      "name": "run_python_file",
+      "description": "Executes a specified Python file within the working directory and returns its output",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "description": "Path to the Python file to run, relative to the working directory"
+          },
+          "args": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional list of arguments to pass to the Python script"
+          }
+        },
+        "required": ["file_path"],
+        "additionalProperties": False
+      }
+    }
+  }
+]
