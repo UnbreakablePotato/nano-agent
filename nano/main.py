@@ -15,9 +15,12 @@ def parse():
     args = parser.parse_args()
     return args
 
-def generate_content(args):
+def generate_content(args, model_arg="gemini-2.5-flash"):
     load_dotenv()
-
+    if model_arg == "":
+        model_arg = "gemini-2.5-flash"
+    
+    #print(f"I am {model_arg}")
     api_key = os.environ.get("GEMINI_API_KEY")
 
     if api_key == None:
@@ -28,7 +31,7 @@ def generate_content(args):
     messages = [types.Content(role="user", parts=[types.Part(text=args)])]
     for i in range(10):
         res = client.models.generate_content(
-            model="gemini-2.5-pro",
+            model=model_arg,
             contents=messages,
             config=types.GenerateContentConfig(tools=[available_functions],system_instruction=system_prompt))
 
