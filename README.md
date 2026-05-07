@@ -26,4 +26,4 @@ Utilizes Gemini's long-context window to maintain multi turn logic and goal trac
 
 **Action:** The agent executes the Python functions mapped to the models tool calls.
 
-**Observation:** The rsults are fed back into Gemini to finalize or iterate a response.
+**Observation:** The results are fed back into Gemini to finalize or iterate a response.
